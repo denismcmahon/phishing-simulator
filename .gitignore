@@ -1,0 +1,40 @@
+# Global ignores
+node_modules/
+dist/
+tmp/
+temp/
+*.log
+.env
+.DS_Store
+
+# Backend (Node.js)
+backend/node_modules/
+backend/.env
+backend/dist/
+backend/*.log
+backend/coverage/
+backend/.nyc_output/
+
+# Frontend (Angular)
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+frontend/.angular/
+frontend/.output/
+frontend/.cache/
+frontend/coverage/
+frontend/.vscode/
+frontend/.DS_Store
+
+# OS/IDE related
+*.swp
+*.swo
+.idea/
+.vscode/
+Thumbs.db
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
