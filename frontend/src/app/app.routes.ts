@@ -3,12 +3,14 @@ import { LoginComponent } from './pages/login/login.component';
 import { RegisterComponent } from './pages/register/register.component';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { EmailTemplatesComponent } from './pages/email-templates/email-templates.component';
+import { TargetsComponent } from './pages/targets/targets.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'dashboard', component: DashboardComponent },
   { path: 'email-templates', component: EmailTemplatesComponent },
+  { path: 'targets', component: TargetsComponent },
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: '**', redirectTo: 'login' }
 ];
