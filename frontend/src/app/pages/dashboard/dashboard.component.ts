@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NavbarComponent } from '../../components/navbar.component';
 import { RouterLink } from '@angular/router';
+import { CampaignService, Campaign } from '../../services/campaign.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -11,9 +12,20 @@ import { RouterLink } from '@angular/router';
   styleUrl: './dashboard.component.scss'
 })
 export class DashboardComponent {
-  dummyCampaigns = [
-    { name: 'HR Policy Reminder', sent: 10, clicks: 5, submits: 2, status: 'Done' },
-    { name: 'IT Security Check', sent: 7, clicks: 3, submits: 1, status: 'Ongoing' },
-    { name: 'Benefit Re-Enrollment', sent: 0, clicks: 0, submits: 0, status: 'Draft' }
-  ];
+  campaigns: Campaign[] = [];
+
+  constructor(private campaignService: CampaignService) {}
+
+  ngOnInit(): void {
+    this.loadCampaigns();
+  }
+
+  loadCampaigns(): void {
+    this.campaignService.getCampaigns().subscribe({
+      next: (data) => this.campaigns = data,
+      error: (err) => {
+        console.error('Failed to load campaigns', err);
+      }
+    });
+  }
 }
