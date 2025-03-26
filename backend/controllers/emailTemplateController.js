@@ -35,8 +35,10 @@ exports.updateTemplate = async (req, res) => {
 };
 
 exports.deleteTemplate = async (req, res) => {
+    console.log('DM ==> here deleting template ==> req.params.id: ', req.params.id);
     try {
-
+        await EmailTemplate.findByIdAndDelete(req.params.id);
+        res.status(204).send();
     } catch (err) {
         res.status(400).json({ message: 'Failed to delete template' });
     }

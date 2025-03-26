@@ -1,5 +1,5 @@
 export interface EmailTemplate {
-  id: string;
+  _id: string;
   name: string;
   subject: string;
   body: string;

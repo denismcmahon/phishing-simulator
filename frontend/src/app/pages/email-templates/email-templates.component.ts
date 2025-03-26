@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { EmailTemplateService } from '../../services/email-template.service';
 import { EmailTemplate } from '../../models/email-template.model';
 import { RouterLink } from '@angular/router';
 import { NavbarComponent } from '../../components/navbar.component';
@@ -8,64 +9,66 @@ import { NavbarComponent } from '../../components/navbar.component';
 @Component({
   selector: 'app-email-templates',
   standalone: true,
-  imports: [CommonModule, FormsModule, NavbarComponent],
+  imports: [CommonModule, FormsModule, RouterLink, NavbarComponent],
   templateUrl: './email-templates.component.html',
   styleUrl: './email-templates.component.scss'
 })
-export class EmailTemplatesComponent {
-  templates: EmailTemplate[] = [
-    {
-      id: '1',
-      name: 'Security Alert',
-      subject: 'Your password was reset',
-      body: 'Hi, we noticed your password was changed. If this wasn’t you, click here.'
-    },
-    {
-      id: '2',
-      name: 'Company Update',
-      subject: 'Q1 Benefits Policy',
-      body: 'Please review the new HR benefits policy for Q1 2024.'
-    }
-  ];
-
+export class EmailTemplatesComponent implements OnInit {
+  templates: EmailTemplate[] = [];
   selectedTemplate: EmailTemplate | null = null;
   isNew = false;
 
-  startNewTemplate() {
-    this.selectedTemplate = {
-      id: '',
-      name: '',
-      subject: '',
-      body: ''
-    };
+  constructor(private templateService: EmailTemplateService) {}
+
+  ngOnInit(): void {
+    this.loadTemplates();
+  }
+
+  loadTemplates(): void {
+    this.templateService.getTemplates().subscribe({
+      next: (data) => this.templates = data,
+      error: () => alert('Failed to load templates')
+    });
+  }
+
+  startNewTemplate(): void {
+    this.selectedTemplate = { _id: '', name: '', subject: '', body: '' };
     this.isNew = true;
   }
 
-  editTemplate(template: EmailTemplate) {
+  editTemplate(template: EmailTemplate): void {
     this.selectedTemplate = { ...template };
     this.isNew = false;
   }
 
-  saveTemplate() {
-    if (this.isNew) {
-      const newTemplate = {
-        ...this.selectedTemplate!,
-        id: crypto.randomUUID()
-      };
-      this.templates.push(newTemplate);
-    } else {
-      const index = this.templates.findIndex(t => t.id === this.selectedTemplate!.id);
-      this.templates[index] = this.selectedTemplate!;
-    }
+  saveTemplate(): void {
+    if (!this.selectedTemplate) return;
 
-    this.selectedTemplate = null;
+    const op = this.isNew
+      ? this.templateService.createTemplate(this.selectedTemplate)
+      : this.templateService.updateTemplate(this.selectedTemplate._id, this.selectedTemplate);
+
+    op.subscribe({
+      next: () => {
+        this.loadTemplates();
+        this.selectedTemplate = null;
+      },
+      error: () => alert('Error saving template')
+    });
   }
 
-  deleteTemplate(id: string) {
-    this.templates = this.templates.filter(t => t.id !== id);
+  deleteTemplate(id: string): void {
+    console.log('DM ==> deleteTemplate ==> this.templates: ', this.templates);
+    console.log('DM ==> deleteTemplate ==> id: ', id);
+    if (!confirm('Delete this template?')) return;
+
+    this.templateService.deleteTemplate(id).subscribe({
+      next: () => this.loadTemplates(),
+      error: () => alert('Error deleting template')
+    });
   }
 
-  cancelEdit() {
+  cancelEdit(): void {
     this.selectedTemplate = null;
   }
 }
