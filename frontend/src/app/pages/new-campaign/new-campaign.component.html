@@ -1,0 +1,45 @@
+<app-navbar></app-navbar>
+
+<div class="container py-5" style="max-width: 700px;">
+  <h2 class="mb-4">Create New Campaign</h2>
+
+  <form (ngSubmit)="onSubmit()">
+    <div class="mb-3">
+      <label class="form-label">Campaign Name</label>
+      <input class="form-control" [(ngModel)]="name" name="name" required />
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Start Date</label>
+      <input type="date" class="form-control" [(ngModel)]="startDate" name="startDate" />
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Email Template</label>
+      <select class="form-select" [(ngModel)]="emailTemplateId" name="emailTemplateId" required>
+        <option value="" disabled selected>Select a template</option>
+        <option *ngFor="let template of templates" [value]="template._id">{{ template.name }}</option>
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Select Targets</label>
+      <div class="form-check" *ngFor="let target of targets">
+        <input
+          class="form-check-input"
+          type="checkbox"
+          [id]="target._id"
+          (change)="onCheckboxChange($event, target._id)"
+        />
+        <label class="form-check-label" [for]="target._id">
+          {{ target.name }} ({{ target.email }})
+        </label>
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary w-100">Create Campaign</button>
+
+    <div *ngIf="errorMessage" class="alert alert-danger mt-3">{{ errorMessage }}</div>
+    <div *ngIf="successMessage" class="alert alert-success mt-3">{{ successMessage }}</div>
+  </form>
+</div>
