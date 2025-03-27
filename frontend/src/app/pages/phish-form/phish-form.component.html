@@ -1,4 +1,5 @@
 <div class="container d-flex justify-content-center align-items-center vh-100">
+  <!-- Before submission -->
   <div class="card p-4 shadow" style="width: 400px;" *ngIf="!submitted">
     <h3 class="text-center mb-4">Secure Email Portal</h3>
     <form (ngSubmit)="onSubmit()">
@@ -16,8 +17,10 @@
     </form>
   </div>
 
-  <div *ngIf="submitted" class="text-center">
-    <h4>Session expired</h4>
-    <p>For security reasons, please try again later.</p>
+  <!-- After submission -->
+  <div *ngIf="submitted" class="card p-4 shadow text-center" style="width: 400px;">
+    <h4 class="mb-3 text-danger">⚠️ This was a simulation</h4>
+    <p>You’ve clicked on a phishing link as part of a security awareness exercise.</p>
+    <p>Please contact your IT or Security team if you have any questions.</p>
   </div>
 </div>

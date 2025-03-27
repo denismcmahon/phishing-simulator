@@ -80,3 +80,39 @@ exports.logClick = async (req, res) => {
     return res.status(500).json({ error: 'Internal server error' });
   }
 };
+
+exports.logSubmit = async (req, res) => {
+  const { campaignId } = req.params;
+
+  try {
+    const campaign = await Campaign.findById(campaignId);
+    if (!campaign) return res.status(404).json({ error: 'Campaign not found' });
+
+    campaign.submits = (campaign.submits || 0) + 1;
+    await campaign.save();
+
+    console.log('DM ==> campaignController.js ==> logSubmit recorded for campaign:', campaignId);
+
+    return res.status(200).json({ message: 'Submission logged successfully' });
+  } catch (err) {
+    console.error('DM ==> logSubmit error:', err);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+exports.getPhishingStats = async (req, res) => {
+  try {
+    const campaigns = await Campaign.find();
+
+    const totalSent = campaigns.reduce((acc, c) => acc + (c.sent || 0), 0);
+    const totalSubmits = campaigns.reduce((acc, c) => acc + (c.submits || 0), 0);
+
+    const phishRate = totalSent > 0 ? Math.round((totalSubmits / totalSent) * 100) : 0;
+
+    return res.json({ phishRate, totalSent, totalSubmits });
+  } catch (err) {
+    console.error('Error calculating phish rate:', err);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+};
+

@@ -23,9 +23,16 @@ export class PhishFormComponent {
 
   onSubmit() {
     this.http
-      .post(`http://localhost:3000/track/submit/${this.campaignId}`, {})
-      .subscribe(() => {
-        this.submitted = true;
+      .post(`http://localhost:3000/api/campaigns/track-submit/${this.campaignId}`, {})
+      .subscribe({
+        next: () => {
+          console.log('✅ Submit successful');
+          this.submitted = true;
+        },
+        error: (err) => {
+          console.error('❌ Error submitting phishing form:', err);
+          alert('An error occurred. Please try again.');
+        }
       });
   }
 }

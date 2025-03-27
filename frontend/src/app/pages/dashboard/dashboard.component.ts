@@ -4,6 +4,7 @@ import { NavbarComponent } from '../../components/navbar.component';
 import { RouterLink } from '@angular/router';
 import { CampaignService, Campaign } from '../../services/campaign.service';
 import { TargetService } from '../../services/target.service';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-dashboard',
@@ -16,15 +17,18 @@ export class DashboardComponent {
   campaigns: Campaign[] = [];
   totalCampaigns = 0;
   totalTargets = 0;
+  phishRate: number = 0;
 
   constructor(
     private campaignService: CampaignService,
-    private targetService: TargetService
+    private targetService: TargetService,
+    private http: HttpClient
   ) {}
 
   ngOnInit(): void {
     this.loadCampaigns();
     this.loadTargetCount();
+    this.fetchPhishRate();
   }
 
   loadCampaigns(): void {
@@ -46,4 +50,18 @@ export class DashboardComponent {
       error: () => alert('Failed to send campaign')
     });
   }
+
+  fetchPhishRate() {
+    this.http.get<{ phishRate: number }>('http://localhost:3000/api/campaigns/stats/phish-rate')
+      .subscribe({
+        next: (res) => {
+          console.log('DM ==> res.phishRate: ', res.phishRate);
+          this.phishRate = res.phishRate;
+        },
+        error: (err) => {
+          console.error('Failed to load phish rate:', err);
+        }
+      });
+  }
+
 }
