@@ -1,4 +1,7 @@
 const Campaign = require('../models/Campaign');
+const { sendPhishingEmail } = require('../services/mailService');
+const Target = require('../models/Target');
+const EmailTemplate = require('../models/EmailTemplate');
 
 exports.getAllCampaigns = async (req, res) => {
   const campaigns = await Campaign.find().sort({ createdAt: -1 });
@@ -22,20 +25,30 @@ exports.deleteCampaign = async (req, res) => {
 };
 
 exports.sendCampaign = async (req, res) => {
-  try {
-    const campaign = await Campaign.findById(req.params.id);
-    if (!campaign) return res.status(404).json({ message: 'Campaign not found' });
+  const { id } = req.params;
 
-    const sentCount = campaign.targets.length;
+  const campaign = await Campaign.findById(id);
+  const template = await EmailTemplate.findById(campaign.emailTemplateId);
+  const targets = await Target.find({ _id: { $in: campaign.targets } });
 
-    campaign.sent = sentCount;
-    campaign.status = 'Ongoing';
-    campaign.startDate = new Date();
+  for (const target of targets) {
+    const trackingUrl = `http://localhost:4200/track-click/${campaign._id}/${target._id}`;
+    console.log('DM ==> trackingUrl: ', trackingUrl);
+    const htmlWithTracking = template.body.replace(
+      '{{tracking_link}}',
+      `<a href="${trackingUrl}">Click here to view message</a>`
+    );
 
-    await campaign.save();
-
-    res.json({ message: 'Campaign sent', campaign });
-  } catch (err) {
-    res.status(500).json({ message: 'Error sending campaign' });
+    await sendPhishingEmail({
+      to: target.email,
+      subject: template.subject,
+      html: htmlWithTracking
+    });
   }
+
+  campaign.status = 'Ongoing';
+  campaign.sent = targets.length;
+  await campaign.save();
+
+  res.json({ message: 'Campaign sent', campaign });
 };

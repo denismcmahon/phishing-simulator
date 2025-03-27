@@ -13,6 +13,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/email-templates', require('./routes/emailTemplates'));
 app.use('/api/campaigns', require('./routes/campaigns'));
 app.use('/api/targets', require('./routes/targets'));
+app.use('/track', require('./routes/tracking'));
 
 mongoose.connect(process.env.MONGO_URI)
     .then(() => {
