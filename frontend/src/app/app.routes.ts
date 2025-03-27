@@ -6,6 +6,7 @@ import { EmailTemplatesComponent } from './pages/email-templates/email-templates
 import { TargetsComponent } from './pages/targets/targets.component';
 import { NewCampaignComponent } from './pages/new-campaign/new-campaign.component';
 import { PhishFormComponent } from './pages/phish-form/phish-form.component';
+import { TrackClickComponent } from './pages/track-click/track-click.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -14,7 +15,9 @@ export const routes: Routes = [
   { path: 'email-templates', component: EmailTemplatesComponent },
   { path: 'targets', component: TargetsComponent },
   { path: 'new-campaign', component: NewCampaignComponent },
+  { path: 'track-click/:campaignId/:targetId', component: TrackClickComponent },
   { path: 'phish-form/:campaignId', component: PhishFormComponent },
+  { path: 'test-track', component: TrackClickComponent },
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: '**', redirectTo: 'login' }
 ];
