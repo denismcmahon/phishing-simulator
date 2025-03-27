@@ -39,4 +39,11 @@ export class DashboardComponent {
       this.totalTargets = data.length;
     });
   }
+
+  sendCampaign(id: string): void {
+    this.campaignService.sendCampaign(id).subscribe({
+      next: () => this.loadCampaigns(),
+      error: () => alert('Failed to send campaign')
+    });
+  }
 }

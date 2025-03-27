@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 export interface Campaign {
-  id?: string;
+  _id: string;
   name: string;
   emailTemplateId?: string;
   targets?: string[];
@@ -38,5 +38,9 @@ export class CampaignService {
 
   deleteCampaign(id: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  sendCampaign(id: string) {
+    return this.http.post(`${this.apiUrl}/${id}/send`, {});
   }
 }

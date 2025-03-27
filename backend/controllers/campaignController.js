@@ -20,3 +20,22 @@ exports.deleteCampaign = async (req, res) => {
   await Campaign.findByIdAndDelete(req.params.id);
   res.status(204).send();
 };
+
+exports.sendCampaign = async (req, res) => {
+  try {
+    const campaign = await Campaign.findById(req.params.id);
+    if (!campaign) return res.status(404).json({ message: 'Campaign not found' });
+
+    const sentCount = campaign.targets.length;
+
+    campaign.sent = sentCount;
+    campaign.status = 'Ongoing';
+    campaign.startDate = new Date();
+
+    await campaign.save();
+
+    res.json({ message: 'Campaign sent', campaign });
+  } catch (err) {
+    res.status(500).json({ message: 'Error sending campaign' });
+  }
+};

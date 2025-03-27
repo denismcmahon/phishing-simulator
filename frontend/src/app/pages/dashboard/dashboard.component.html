@@ -60,17 +60,28 @@
           <td>{{ campaign.clicks }}</td>
           <td>{{ campaign.submits }}</td>
           <td>
-            <span
-              class="badge"
-              [ngClass]="{
-                'bg-success': campaign.status === 'Done',
-                'bg-warning': campaign.status === 'Ongoing',
-                'bg-secondary': campaign.status === 'Draft'
-              }"
-            >
-              {{ campaign.status }}
-            </span>
+            <div class="d-flex align-items-center gap-2">
+              <span
+                class="badge"
+                [ngClass]="{
+                  'bg-success': campaign.status === 'Done',
+                  'bg-warning': campaign.status === 'Ongoing',
+                  'bg-secondary': campaign.status === 'Draft'
+                }"
+              >
+                {{ campaign.status }}
+              </span>
+
+              <button
+                *ngIf="campaign.status === 'Draft'"
+                class="btn btn-sm btn-outline-primary ms-5"
+                (click)="sendCampaign(campaign._id!)"
+              >
+                Send
+              </button>
+            </div>
           </td>
+
         </tr>
       </tbody>
     </table>
